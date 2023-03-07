@@ -13,12 +13,13 @@ class FPS:
         cv2.putText(img, "fps:"+ str(int(fps)),(10,70), cv2.FONT_HERSHEY_PLAIN,3,(0,255,0),3)
         return img
 class FaceDetector():
-    def __init__(self, minDetectionCon=0.5,modelType=2):
-        self.minDectectionCon = minDetectionCon
+    def __init__(self, minDetectionCon=0.5,modelType=1):
+        self.minDetectionCon = minDetectionCon
         self.modelType = modelType
+
         self.mpFaceDetection = mp.solutions.face_detection
         self.mpDraw = mp.solutions.drawing_utils
-        self.faceDetection = self.mpFaceDetection.FaceDetection(minDetectionCon) 
+        self.faceDetection = self.mpFaceDetection.FaceDetection(min_detection_confidence=self.minDetectionCon, model_selection=self.modelType) 
     def findFaces(self,img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.faceDetection.process(imgRGB)

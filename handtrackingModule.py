@@ -3,8 +3,9 @@ import mediapipe as mp
 import time
 
 
-class handDectector():
-    def __init__(self,mode=False,
+class handDetector():
+    def __init__(self,
+                mode=False,
                 maxHands=2,
                 complexity=1,
                 detectConfi=0.5,
@@ -38,23 +39,32 @@ class handDectector():
         lmList = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNum]
-
             for id, lm in enumerate(myHand.landmark):
-                # print(id, lm)
                 #convert to pixels of screen
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h) # center x and y
                 lmList.append([id,cx,cy])
                 if draw:
-                    # if id == 0 or id == 4: # highlight a specific node
                     cv2.circle(img, (cx,cy), 15, (255,0,255), cv2.FILLED)
         return lmList
 
+class FPS:
+    def __init__(self) -> None:
+        self.pTime = 0
+        self.cTime = 0
+    def show(self,img):
+        self.cTime = time.time() # current time  
+        fps = 1 / (self.cTime - self.pTime)
+        self.pTime = self.cTime
+        # return cv2.putText(img, str(int(fps)),(10,70), cv2.FONT_HERSHEY_PLAIN,3,(255,0,255),3)
+        cv2.putText(img, str(int(fps)),(10,70), cv2.FONT_HERSHEY_PLAIN,3,(255,0,255),3)
+        return img
+    
 def main():
     pTime = 0
     cTime = 0
     cap = cv2.VideoCapture(0)
-    detector = handDectector()
+    detector = handDetector()
     while True:
         success, img = cap.read()
         img = detector.findHands(img)
